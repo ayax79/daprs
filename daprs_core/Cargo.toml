@@ -1,0 +1,16 @@
+[package]
+name = "daprs_core"
+description = "Core library for Rust Dapr"
+version = "0.1.0"
+authors = ["Jack Wright <ayax79@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+reqwest = "^0.9"
+serde = "^1.0"
+serde_json = "^1.0"
+serde_derive = "^1.0"
+
+[dev-dependencies]
+actix-web = "^1.0"
+uuid = { version = "^0.8", features = ["serde", "v4"]}
