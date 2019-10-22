@@ -1,10 +1,9 @@
 extern crate daprs_derive;
-use daprs_derive::Stateful;
 use daprs_core::state::Stateful;
+use daprs_derive::Stateful;
 
 #[derive(Stateful, Clone, Debug)]
-struct TestStruct {        
-}
+struct TestStruct {}
 
 #[test]
 pub fn test_derive() {

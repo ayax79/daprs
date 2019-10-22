@@ -1,16 +1,12 @@
 mod model;
 mod service;
-mod error;
 
-use daprs_core::{
-    dapper_http_port,
-    error::DaprError,
-    state::StateClient,
-};
-use actix_web::{web, App, HttpServer};
-use actix::prelude::*;
+use crate::service::{get, post};
+use actix_web::{middleware, web, App, HttpServer};
+use daprs_core::{dapper_http_port, error::DaprError, state::StateClient};
 use std::process::exit;
 
+/// Port number this microservice should listen to
 const PORT: u16 = 3000;
 
 fn main() {
@@ -27,8 +23,13 @@ fn init() -> Result<(), DaprError> {
     HttpServer::new(move || {
         App::new()
             .data(state_client.clone())
-            // .route("/", web::get().to(index))
-            // .route("/again", web::get().to(index2))
+            .wrap(middleware::Logger::default())
+            .data(web::JsonConfig::default().limit(4096))
+            .service(
+                web::resource("/order")
+                    .route(web::post().to(post))
+                    .route(web::get().to(get)),
+            )
     })
     .bind(format!("127.0.0.1:{}", PORT))
     .unwrap()
