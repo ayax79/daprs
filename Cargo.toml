@@ -1,15 +1,6 @@
-[package]
-name = "daprs"
-description = "A Microsoft Daprs library for rust"
-version = "0.1.0"
-authors = ["Jack Wright <ayax79@gmail.com>"]
-edition = "2018"
-
+[workspace]
 members = [
     "daprs_core",
-    "daprs_derive"
+    "daprs_derive",
+    "examples/actix"
 ]
-
-[dev-dependencies]
-actix-web = "^1.0"
-uuid = { version = "^0.8", features = ["serde", "v4"]}
