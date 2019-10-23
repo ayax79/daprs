@@ -1,10 +1,11 @@
 use crate::error::DaprError;
 use reqwest;
 use serde::{Deserialize, Serialize};
+use log::debug;
 
 /// Trait representing any state that can be stored
 pub trait Stateful: Sized {
-    fn key() -> &'static str;
+    fn key(&self) -> String;
 }
 
 /// Client for persisting and retrieving state from the Dapr state service
@@ -14,15 +15,22 @@ pub struct StateClient {
 }
 
 impl StateClient {
-    pub fn new(port: u16) -> Self {
+
+    /// Creates a new instance of StateClient
+    /// 
+    /// # Arguments
+    /// * `dapr_port` - The http port that dapr is listening on
+    pub fn new(dapr_port: u16) -> Self {
+        let state_url = format!("http://localhost:{}/v1.0/state", dapr_port);
+        debug!("Configuring state client with state url: {}", state_url);
         StateClient {
-            state_url: format!("http://localhost:{}/v1.0/state", port),
+            state_url, 
         }
     }
 
     /// Save the state for the specified object type
     /// The type passed in must implement serde Serialize
-    pub fn push<S>(&self, s: S) -> Result<(), DaprError>
+    pub fn push<S>(&self, key: &str, value: S) -> Result<(), DaprError>
     where
         S: Stateful + Serialize,
     {
@@ -38,7 +46,7 @@ impl StateClient {
 
     /// Gets the last state set for the specified object
     /// The type retrieved must implement serde Deserialize
-    pub fn get<S>(&self) -> Result<S, DaprError>
+    pub fn get<S>(&self, key: &str) -> Result<S, DaprError>
     where
         for<'de> S: Stateful + Deserialize<'de>,
     {

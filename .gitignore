@@ -5,3 +5,5 @@ daprs_core/target
 **/*.ipr
 **/*.iws
 **/*.iml
+examples/actix/target
+examples/actix/components

@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use std::convert::{From, Into};
 use uuid::Uuid;
 
-#[derive(Stateful, Serialize, Deserialize, Debug)]
+#[derive(Stateful, Serialize, Deserialize, Debug, Clone)]
 pub struct Order {
     order_id: Uuid,
     product: String,
