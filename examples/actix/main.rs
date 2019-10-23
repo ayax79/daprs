@@ -3,7 +3,7 @@ mod service;
 
 use crate::service::{get, post};
 use actix_web::{middleware, web, App, HttpServer};
-use daprs_core::{dapper_http_port, error::DaprError, state::StateClient};
+use daprs::{dapper_http_port, error::DaprError, state::StateClient};
 use std::process::exit;
 use std::env;
 use pretty_env_logger;

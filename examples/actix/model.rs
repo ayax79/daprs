@@ -1,13 +1,11 @@
 use actix_web::HttpResponse;
-use daprs_core::error::DaprError;
-use daprs_core::state::Stateful;
-use daprs_derive::Stateful;
+use daprs::error::DaprError;
 use http::StatusCode;
 use serde::{Deserialize, Serialize};
 use std::convert::{From, Into};
 use uuid::Uuid;
 
-#[derive(Stateful, Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Order {
     order_id: Uuid,
     product: String,
