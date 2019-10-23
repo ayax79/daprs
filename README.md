@@ -1,6 +1,6 @@
-#Daprs - Rust support for Microsoft Dapr
+# Daprs - Rust support for Microsoft Dapr
 
-##Current Features
+## Current Features
 1. StateClient provides support for Dapr state service
 
 ## Examples
@@ -11,6 +11,7 @@
 
 ### Actix Microservice Dapr State Example
 This example uses a simple actix microservice to save and get state using the daprs::state::StateClient
+location: examples/actix-state
 
 Running the Example:
 ```
