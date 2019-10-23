@@ -25,7 +25,7 @@ impl StateClient {
 
     /// Save the state for the specified object type
     /// The type passed in must implement serde Serialize
-    pub fn push<S: Serialize>(&self, key: &str, value: S) -> Result<(), DaprError> {
+    pub fn save<S: Serialize>(&self, key: &str, value: S) -> Result<(), DaprError> {
         let state = vec![State::new(key, value)];
         reqwest::Client::new()
             .post(&self.state_url)
