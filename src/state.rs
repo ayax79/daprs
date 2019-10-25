@@ -1,7 +1,7 @@
 use crate::error::DaprError;
+use log::{debug, error};
 use reqwest;
 use serde::{Deserialize, Serialize};
-use log::{debug, error};
 
 /// Client for persisting and retrieving state from the Dapr state service
 #[derive(Clone)]
@@ -10,17 +10,14 @@ pub struct StateClient {
 }
 
 impl StateClient {
-
     /// Creates a new instance of StateClient
-    /// 
+    ///
     /// # Arguments
     /// * `dapr_port` - The http port that dapr is listening on
     pub fn new(dapr_port: u16) -> Self {
         let state_url = format!("http://localhost:{}/v1.0/state", dapr_port);
         debug!("Configuring state client with state url: {}", state_url);
-        StateClient {
-            state_url, 
-        }
+        StateClient { state_url }
     }
 
     /// Save the state for the specified object type
@@ -33,11 +30,15 @@ impl StateClient {
             .send()
             .and_then(|mut r| {
                 if !r.status().is_success() {
-                    error!("Receiving error response from server: {:?} body: {:?}", r.status(), r.text());                
+                    error!(
+                        "Receiving error response from server: {:?} body: {:?}",
+                        r.status(),
+                        r.text()
+                    );
                 }
                 // If we were non-success make that an error too
                 r.error_for_status()
-            }) 
+            })
             .map(|_| ()) // Empty return coerce
             .map_err(DaprError::from_send)
     }
