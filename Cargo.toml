@@ -6,7 +6,7 @@ authors = ["Jack Wright <ayax79@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-reqwest = "^0.9"
+reqwest = { version = "0.10.0-alpha.1", features = ["json"] }
 http = "^0.1"
 serde = "^1.0"
 serde_json = "^1.0"
@@ -17,3 +17,5 @@ log = "^0.4"
 actix-web = "^1.0"
 uuid = { version = "^0.8", features = ["serde", "v4"]}
 pretty_env_logger = "^0.3"
+futures01 = { package = "futures", version = "0.1.29", optional = false }
+futures-preview = { version  = "0.3.0-alpha.19", features = ["compat"] }
