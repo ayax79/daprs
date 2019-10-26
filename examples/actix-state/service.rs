@@ -4,10 +4,12 @@ use daprs::state::StateClient;
 use http::StatusCode;
 use log::error;
 
-pub fn post(json_order: Json<Order>, state_client: Data<StateClient>) -> HttpResponse {
-    let order = json_order.into_inner();
-    if let Err(e) = state_client.save("order", order.clone()) { 
-        error!("Error pushing state for key: order value: {:?}, received: {}", order, e);
+pub fn post(order: Json<Order>, state_client: Data<StateClient>) -> HttpResponse {
+    if let Err(e) = state_client.save("order", order.clone()) {
+        error!(
+            "Error pushing state for key: order value: {:?}, received: {}",
+            order, e
+        );
         ErrorResponse::from(e).into()
     } else {
         HttpResponse::build(StatusCode::ACCEPTED).finish()

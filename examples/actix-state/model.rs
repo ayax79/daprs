@@ -15,18 +15,27 @@ pub struct Order {
 #[derive(Debug, Serialize)]
 pub struct ErrorResponse {
     message: String,
+    #[serde(skip_serializing)]
+    status: u16,
 }
 
 impl From<DaprError> for ErrorResponse {
     fn from(e: DaprError) -> Self {
-        ErrorResponse {
-            message: format!("{}", e),
+        match e {
+            DaprError::NotFoundError => ErrorResponse {
+                message: format!("{}", e),
+                status: 404,
+            },
+            _ => ErrorResponse {
+                message: format!("{}", e),
+                status: 500,
+            },
         }
     }
 }
 
 impl Into<HttpResponse> for ErrorResponse {
     fn into(self) -> HttpResponse {
-        HttpResponse::build(StatusCode::INTERNAL_SERVER_ERROR).json(self)
+        HttpResponse::build(StatusCode::from_u16(&self.status)).json(self)
     }
 }

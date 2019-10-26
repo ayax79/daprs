@@ -4,17 +4,17 @@ mod service;
 use crate::service::{get, post};
 use actix_web::{middleware, web, App, HttpServer};
 use daprs::{dapper_http_port, error::DaprError, state::StateClient};
-use std::process::exit;
-use std::env;
-use pretty_env_logger;
 use log::info;
+use pretty_env_logger;
+use std::env;
+use std::process::exit;
 
 /// Port number this microservice should listen to
 const PORT: u16 = 3000;
 
 fn main() {
-    info!("Starting my rust dapr app");
     init_logger();
+    info!("Starting actix-state-example");
     if let Err(err) = init_actix() {
         eprintln!("{}", err);
         exit(1);
