@@ -3,7 +3,7 @@ mod service;
 
 use crate::service::{bar_post, foo_post, subscribe};
 use actix_web::FromRequest;
-use actix_web::{error, middleware, web, App, HttpServer, HttpResponse};
+use actix_web::{error, middleware, web, App, HttpResponse, HttpServer};
 use daprs::error::DaprError;
 use log::{error, info};
 use mime;

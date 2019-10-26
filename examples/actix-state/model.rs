@@ -22,8 +22,8 @@ pub struct ErrorResponse {
 impl From<DaprError> for ErrorResponse {
     fn from(e: DaprError) -> Self {
         match e {
-            DaprError::NotFoundError => ErrorResponse {
-                message: format!("{}", e),
+            DaprError::NotFoundError(ref key) => ErrorResponse {
+                message: format!("key: {}. {}", key, e),
                 status: 404,
             },
             _ => ErrorResponse {
@@ -36,6 +36,7 @@ impl From<DaprError> for ErrorResponse {
 
 impl Into<HttpResponse> for ErrorResponse {
     fn into(self) -> HttpResponse {
-        HttpResponse::build(StatusCode::from_u16(&self.status)).json(self)
+        let status = StatusCode::from_u16(self.status).unwrap_or(StatusCode::INTERNAL_SERVER_ERROR);
+        HttpResponse::build(status).json(self)
     }
 }
