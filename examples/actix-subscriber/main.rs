@@ -11,6 +11,7 @@ use model::FooMessage;
 use pretty_env_logger;
 use std::env;
 use std::process::exit;
+use std::str::FromStr;
 
 /// Port number this microservice should listen to
 const PORT: u16 = 3000;
@@ -43,20 +44,7 @@ fn init_actix() -> Result<(), DaprError> {
                     .data(web::Json::<FooMessage>::configure(|cfg| {
                         cfg.limit(4096)
                             .content_type(|mime| {
-                                // mime.type_() == mime::APPLICATION
-                                //     && mime.subtype().as_str() == "cloudevents+json"
-                                true
-                            })
-                            .error_handler(|err, req| {
-                                error!("error: {}", err);
-                                error!("request: {:?}", req);
-
-                                // <- create custom error response
-                                error::InternalError::from_response(
-                                    err,
-                                    HttpResponse::Conflict().finish(),
-                                )
-                                .into()
+                               mime == mime::Mime::from_str("application/webevents+json").unwrap()
                             })
                     }))
                     .route(web::post().to(foo_post)), // our topic name
