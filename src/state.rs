@@ -1,6 +1,6 @@
 use crate::error::DaprError;
 use log::{debug, error};
-use reqwest::Client;
+use reqwest;
 use serde::{Deserialize, Serialize};
 
 /// Client for persisting and retrieving state from the Dapr state service

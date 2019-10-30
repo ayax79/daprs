@@ -22,8 +22,8 @@ use std::process::exit;
 const PORT: u16 = 3000;
 
 fn main() {
-    info!("Starting my rust dapr app");
     init_logger();
+    info!("Starting actix-state-example");
     if let Err(err) = init_actix() {
         eprintln!("{}", err);
         exit(1);

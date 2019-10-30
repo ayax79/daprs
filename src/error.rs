@@ -14,13 +14,13 @@ pub enum DaprError {
     SendStateError(String),
     /// Misc errors on getting from the Dapr state service
     GetStateError(String),
-    EmptyStateError(String),
+    NotFoundError(String),
 }
 
 impl DaprError {
     pub fn from_get(key: &str, re: ReqwestError) -> Self {
         match re.status() {
-            Some(StatusCode::NOT_FOUND) => Self::EmptyStateError(key.to_owned()),
+            Some(StatusCode::NOT_FOUND) => Self::NotFoundError(key.to_owned()),
             _ => Self::GetStateError(format!("{}", re)),
         }
     }
@@ -34,7 +34,7 @@ impl fmt::Display for DaprError {
             Self::InvalidDaprPort(ref msg) => write!(f, "InvalidDaprPort: {}", msg),
             Self::SendStateError(ref msg) => write!(f, "Error sending state: {}", msg),
             Self::GetStateError(ref msg) => write!(f, "Error getting state: {}", msg),
-            Self::EmptyStateError(ref key) => write!(f, "No stored state for: {}", key),
+            Self::NotFoundError(ref key) => write!(f, "No stored state for: {}", key),
         }
     }
 }
