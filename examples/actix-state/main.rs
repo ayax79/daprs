@@ -1,9 +1,18 @@
 mod model;
 mod service;
 
-use crate::service::{get, post};
-use actix_web::{middleware, web, App, HttpServer};
+use crate::{
+    model::Order,
+    service::{get, post},
+};
+use actix_web::{
+    middleware,
+    web::{self, Data, Json},
+    App, HttpResponse, HttpServer,
+};
 use daprs::{dapper_http_port, error::DaprError, state::StateClient};
+use futures::future::{FutureExt, TryFutureExt};
+use futures01::future::Future;
 use log::info;
 use pretty_env_logger;
 use std::env;
@@ -41,8 +50,8 @@ fn init_actix() -> Result<(), DaprError> {
             .data(web::JsonConfig::default().limit(4096))
             .service(
                 web::resource("/order")
-                    .route(web::post().to(post))
-                    .route(web::get().to(get)),
+                    .route(web::post().to_async(async_post))
+                    .route(web::get().to_async(async_get)),
             )
     })
     .bind(format!("127.0.0.1:{}", PORT))
@@ -50,4 +59,19 @@ fn init_actix() -> Result<(), DaprError> {
     .run()
     .unwrap();
     Ok(())
+}
+
+// This is a temporary ugly conversion from std::futures::Future to the old futures v0.1
+// This will go away when actix updates to use std futures.
+fn async_post(
+    json_order: Json<Order>,
+    state_client: Data<StateClient>,
+) -> impl Future<Item = HttpResponse, Error = ()> {
+    post(json_order, state_client)
+        .unit_error()
+        .boxed_local()
+        .compat()
+}
+fn async_get(state_client: Data<StateClient>) -> impl Future<Item = HttpResponse, Error = ()> {
+    get(state_client).unit_error().boxed_local().compat()
 }

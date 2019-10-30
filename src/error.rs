@@ -18,10 +18,6 @@ pub enum DaprError {
 }
 
 impl DaprError {
-    pub fn from_send(re: ReqwestError) -> Self {
-        DaprError::SendStateError(format!("{}", re))
-    }
-
     pub fn from_get(key: &str, re: ReqwestError) -> Self {
         match re.status() {
             Some(StatusCode::NOT_FOUND) => Self::NotFoundError(key.to_owned()),
@@ -52,5 +48,11 @@ impl From<VarError> for DaprError {
 impl From<ParseIntError> for DaprError {
     fn from(pie: ParseIntError) -> Self {
         DaprError::InvalidDaprPort(format!("{}", pie))
+    }
+}
+
+impl From<reqwest::Error> for DaprError {
+    fn from(error: reqwest::Error) -> Self {
+        DaprError::SendStateError(format!("{}", error))
     }
 }

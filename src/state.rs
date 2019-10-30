@@ -4,7 +4,7 @@ use reqwest;
 use serde::{Deserialize, Serialize};
 
 /// Client for persisting and retrieving state from the Dapr state service
-#[derive(Clone)]
+#[derive(Clone, Serialize)]
 pub struct StateClient {
     state_url: String,
 }
@@ -22,39 +22,38 @@ impl StateClient {
 
     /// Save the state for the specified object type
     /// The type passed in must implement serde Serialize
-    pub fn save<S: Serialize>(&self, key: &str, value: S) -> Result<(), DaprError> {
+    pub async fn save<S: Serialize>(&self, key: &str, value: S) -> Result<(), DaprError> {
         let state = vec![State::new(key, value)];
-        reqwest::Client::new()
+        let response = Client::new()
             .post(&self.state_url)
             .json(&state)
             .send()
-            .and_then(|mut r| {
-                if !r.status().is_success() {
-                    error!(
-                        "Receiving error response from server: {:?} body: {:?}",
-                        r.status(),
-                        r.text()
-                    );
-                }
-                // If we were non-success make that an error too
-                r.error_for_status()
-            })
-            .map(|_| ()) // Empty return coerce
-            .map_err(DaprError::from_send)
+            .await?;
+        // If we were non-success make that an error too
+        let response = response.error_for_status()?;
+        if !response.status().is_success() {
+            error!(
+                "Receiving error response from server: {:?} body: {:?}",
+                response.status(),
+                response.text().await?
+            );
+        }
+
+        Ok(())
     }
 
     /// Gets the last state set for the specified object
     /// The type retrieved must implement serde Deserialize
-    pub fn get<S>(&self, key: &str) -> Result<S, DaprError>
+    pub async fn get<S>(&self, key: &str) -> Result<S, DaprError>
     where
         for<'de> S: Deserialize<'de>,
     {
         let url = self.url(key);
-        reqwest::Client::new()
-            .get(&url)
-            .send()
-            .and_then(|r| r.error_for_status()) // If we were non-success make that an error too
-            .and_then(|mut r| r.json::<S>()) // Attempt to deserialize json
+        let response = Client::new().get(&url).send().await?;
+        let response = response.error_for_status()?; // If we were non-success make that an error too
+        response
+            .json::<S>() // Attempt to deserialize json
+            .await
             .map_err(|e| DaprError::from_get(key, e)) // Coerce the reqwest error to a DaprError
     }
 
