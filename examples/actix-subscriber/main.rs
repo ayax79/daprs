@@ -1,7 +1,8 @@
+#[macro_use]
 mod model;
 mod service;
 
-use crate::service::{bar_post, foo_post, subscribe};
+use crate::service::{foo_post, subscribe};
 use actix_web::FromRequest;
 use actix_web::{error, middleware, web, App, HttpResponse, HttpServer};
 use daprs::error::DaprError;
@@ -29,7 +30,7 @@ fn main() {
 /// If there isn't a RUST_LOG environment variable defined we will define one
 fn init_logger() {
     if env::var_os("RUST_LOG").is_none() {
-        env::set_var("RUST_LOG", "info")
+        env::set_var("RUST_LOG", "debug")
     }
     pretty_env_logger::init();
 }

@@ -5,6 +5,7 @@ pub struct FooMessage {
     message: String,
 }
 
+
 #[cfg(test)]
 mod tests {
     use super::*;

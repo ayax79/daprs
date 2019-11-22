@@ -5,12 +5,16 @@ version = "0.1.0"
 authors = ["Jack Wright <ayax79@gmail.com>"]
 edition = "2018"
 
+[features]
+default = []
+actix = []
+
 [dependencies]
 reqwest = { version = "0.10.0-alpha.1", features = ["json"] }
 http = "^0.1"
-serde = "^1.0"
+serde = { version = "^1.0", features = ["derive"] }
 serde_json = "^1.0"
-serde_derive = "^1.0"
+# serde_derive = "^1.0"
 log = "^0.4"
 
 [dev-dependencies]
@@ -22,3 +26,7 @@ futures01 = { package = "futures", version = "0.1.29", optional = false }
 futures-preview = { version  = "0.3.0-alpha.19", features = ["compat"] }
 mime = "^0.3"
 bytes = "^0.4"
+
+[[example]]
+name = "actix-subscriber"
+required-features = ["actix"]
