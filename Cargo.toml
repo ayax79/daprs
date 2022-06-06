@@ -19,7 +19,7 @@ log = "^0.4"
 
 [dev-dependencies]
 actix-web = "^1.0"
-actix-service = "^0.4"
+actix-service = "^2.0"
 uuid = { version = "^0.8", features = ["serde", "v4"]}
 pretty_env_logger = "^0.3"
 futures01 = { package = "futures", version = "0.1.29", optional = false }
